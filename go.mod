@@ -1,4 +1,4 @@
-module github.com/gophish/gophish
+module github.com/MarSch9901/gophish-master
 
 go 1.13
 

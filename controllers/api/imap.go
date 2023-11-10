@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"time"
 
-	ctx "github.com/gophish/gophish/context"
-	"github.com/gophish/gophish/imap"
-	"github.com/gophish/gophish/models"
+	ctx "github.com/MarSch9901/gophish-master/context"
+	"github.com/MarSch9901/gophish-master/imap"
+	"github.com/MarSch9901/gophish-master/models"
 )
 
 // IMAPServerValidate handles requests for the /api/imapserver/validate endpoint

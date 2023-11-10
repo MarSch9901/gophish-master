@@ -15,10 +15,10 @@ import (
 	"strings"
 	"time"
 
-	log "github.com/gophish/gophish/logger"
+	log "github.com/MarSch9901/gophish-master/logger"
 	"github.com/jordan-wright/email"
 
-	"github.com/gophish/gophish/models"
+	"github.com/MarSch9901/gophish-master/models"
 )
 
 // Pattern for GoPhish emails e.g ?rid=AbC1234
@@ -116,7 +116,8 @@ func (im *Monitor) Shutdown() error {
 }
 
 // checkForNewEmails logs into an IMAP account and checks unread emails
-//  for the rid campaign identifier.
+//
+//	for the rid campaign identifier.
 func checkForNewEmails(im models.IMAP) {
 	im.Host = im.Host + ":" + strconv.Itoa(int(im.Port)) // Append port
 	mailServer := Mailbox{

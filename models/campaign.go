@@ -5,8 +5,8 @@ import (
 	"net/url"
 	"time"
 
-	log "github.com/gophish/gophish/logger"
-	"github.com/gophish/gophish/webhook"
+	log "github.com/MarSch9901/gophish-master/logger"
+	"github.com/MarSch9901/gophish-master/webhook"
 	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 )
@@ -609,7 +609,7 @@ func PostCampaign(c *Campaign, uid int64) error {
 	return tx.Commit().Error
 }
 
-//DeleteCampaign deletes the specified campaign
+// DeleteCampaign deletes the specified campaign
 func DeleteCampaign(id int64) error {
 	log.WithFields(logrus.Fields{
 		"campaign_id": id,
