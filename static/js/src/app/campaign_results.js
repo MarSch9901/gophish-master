@@ -367,9 +367,9 @@ var renderDevice = function (event_details) {
 function renderTimeline(data) {
     record = {
         "id": data[0],
-        "first_name": data[2],
-        "last_name": data[3],
-        "email": data[4],
+        "first_name": "Unknown",
+        "last_name": "Unknown",
+        "email": "Unknown",
         "position": data[5],
         "status": data[6],
         "reported": data[7],
