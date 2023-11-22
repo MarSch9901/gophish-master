@@ -145,6 +145,7 @@ func (w *DefaultWorker) LaunchCampaign(c models.Campaign) {
 		mailEntries = append(mailEntries, m)
 	}
 	w.mailer.Queue(mailEntries)
+
 }
 
 // SendTestEmail sends a test email

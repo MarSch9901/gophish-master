@@ -38,6 +38,14 @@ type Result struct {
 	BaseRecipient
 }
 
+func DeleteCampaignParticipantDetails(campaignId int64) error {
+	// Aktualisieren der entsprechenden Felder in der Tabelle 'results'
+	err := db.Model(&BaseRecipient{}).Where("user_id IN (SELECT user_id FROM results WHERE campaign_id = ?)", campaignId).
+		Updates(map[string]interface{}{"email": "", "first_name": "", "last_name": ""}).Error
+
+	return err
+}
+
 func (r *Result) createEvent(status string, details interface{}) (*Event, error) {
 	e := &Event{Email: r.Email, Message: status}
 	if details != nil {
