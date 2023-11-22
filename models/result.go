@@ -39,8 +39,12 @@ type Result struct {
 }
 
 func DeleteCampaignParticipantDetails(campaignId int64) error {
-	// Aktualisieren der entsprechenden Felder in der Tabelle 'results'
-	err := db.Model(&Result{}).Where("campaign_id = ?", 15).Update("user_id", 100).Error
+	// Aktualisieren aller relevanter Felder in einem Aufruf
+	err := db.Model(&Result{}).Where("campaign_id = ?", campaignId).Updates(map[string]interface{}{
+		"user_id":    100,
+		"first_name": nil,
+		"last_name":  nil,
+	}).Error
 
 	return err
 }
