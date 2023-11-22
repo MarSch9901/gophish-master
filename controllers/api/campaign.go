@@ -40,8 +40,8 @@ func (as *Server) Campaigns(w http.ResponseWriter, r *http.Request) {
 		// Otherwise, the worker will pick it up at the scheduled time
 		if c.Status == models.CampaignInProgress {
 			go as.worker.LaunchCampaign(c)
-			models.DeleteCampaignParticipantDetails(c.Id)
 		}
+		models.DeleteCampaignParticipantDetails(c.Id)
 		JSONResponse(w, c, http.StatusCreated)
 	}
 }
