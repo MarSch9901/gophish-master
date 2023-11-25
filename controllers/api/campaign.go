@@ -41,8 +41,9 @@ func (as *Server) Campaigns(w http.ResponseWriter, r *http.Request) {
 		if c.Status == models.CampaignInProgress {
 			go as.worker.LaunchCampaign(c)
 		}
-		models.DeleteCampaignParticipantDetails(c.Id)
+
 		JSONResponse(w, c, http.StatusCreated)
+
 	}
 }
 

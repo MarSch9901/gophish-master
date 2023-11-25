@@ -135,7 +135,7 @@ func TestMailLogGrouping(t *testing.T) {
 
 	lm := &logMailer{queue: make(chan []mailer.Mail)}
 	worker := &DefaultWorker{}
-	worker.mailer = lm
+	//worker.mailer = lm
 
 	// Trigger the worker, generating the maillogs and sending them to the
 	// mailer

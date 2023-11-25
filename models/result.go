@@ -38,13 +38,24 @@ type Result struct {
 	BaseRecipient
 }
 
+/*
 func DeleteCampaignParticipantDetails(campaignId int64) error {
 	// Aktualisieren aller relevanter Felder in einem Aufruf
 	err := db.Model(&Result{}).Where("campaign_id = ?", campaignId).Updates(map[string]interface{}{
-		"user_id":    -1,
+		"user_id":    1,
 		"first_name": "Unknown",
 		"last_name":  "Unknown",
-		"email":      "Unknown@gmail.com",
+		"email":      "Unknown",
+	}).Error
+
+	return err
+}*/
+
+func UpdateLatestParticipantDetails(campaignId int64) error {
+	err := db.Model(&Result{}).Where("campaign_id = ?", campaignId).Updates(map[string]interface{}{
+		"user_id":    nil,
+		"first_name": nil,
+		"last_name":  nil,
 	}).Error
 
 	return err

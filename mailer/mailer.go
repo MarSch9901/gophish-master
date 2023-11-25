@@ -34,6 +34,7 @@ func (e *ErrMaxConnectAttempts) Error() string {
 type Mailer interface {
 	Start(ctx context.Context)
 	Queue([]Mail)
+	IsQueueEmpty() bool
 }
 
 // Sender exposes the common operations required for sending email.
@@ -228,5 +229,16 @@ func sendMail(ctx context.Context, dialer Dialer, ms []Mail) {
 			"email":         message.GetHeader("To")[0],
 		}).Info("Email sent")
 		m.Success()
+	}
+}
+
+func (mw *MailWorker) IsQueueEmpty() bool {
+	select {
+	case <-mw.queue:
+		// Es gibt ein Element im Channel
+		return false
+	default:
+		// Der Channel ist leer
+		return true
 	}
 }
