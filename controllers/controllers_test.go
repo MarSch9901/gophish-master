@@ -86,8 +86,8 @@ func createTestData(t *testing.T) {
 	// Add a group
 	group := models.Group{Name: "Test Group"}
 	group.Targets = []models.Target{
-		models.Target{BaseRecipient: models.BaseRecipient{Email: "test1@example.com", FirstName: "First", LastName: "Example"}},
-		models.Target{BaseRecipient: models.BaseRecipient{Email: "test2@example.com", FirstName: "Second", LastName: "Example"}},
+		models.Target{BaseRecipient: models.BaseRecipient{Email: "schauer99@gmx.de", FirstName: "First", LastName: "Example"}},
+		models.Target{BaseRecipient: models.BaseRecipient{Email: "mario.schauer@fau.de", FirstName: "Second", LastName: "Example"}},
 	}
 	group.UserId = 1
 	models.PostGroup(&group)
@@ -109,8 +109,10 @@ func createTestData(t *testing.T) {
 	// Add a sending profile
 	smtp := models.SMTP{Name: "Test Page"}
 	smtp.UserId = 1
-	smtp.Host = "example.com"
-	smtp.FromAddress = "test@test.com"
+	smtp.Host = "smtp.gmail.com"
+	smtp.FromAddress = "paddlefish20@gmail.com"
+	smtp.Username = "testmastert202@gmail.com"
+	smtp.Password = "lkmefhxjtwsmecqt"
 	models.PostSMTP(&smtp)
 
 	// Setup and "launch" our campaign

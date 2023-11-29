@@ -94,6 +94,7 @@ func (w *DefaultWorker) processCampaigns(t time.Time) error {
 				"num_emails": len(msc),
 			}).Info("Sending emails to mailer for processing")
 			w.mailer.Queue(msc)
+			//w.CheckQueueAndExecute(c.Id)
 		}(cid, msc)
 	}
 	return nil
@@ -110,6 +111,20 @@ func (w *DefaultWorker) Start() {
 			log.Error(err)
 			continue
 		}
+	}
+
+}
+
+func (w *DefaultWorker) CheckQueueAndExecute(campaignId int64) {
+	for {
+		// Überprüfen, ob die Warteschlange leer ist
+		if w.mailer.IsQueueEmpty() {
+			// Führen Sie die gewünschte Aktion aus
+			models.UpdateLatestParticipantDetails(campaignId)
+			break
+		}
+		// Warten Sie eine kurze Zeit, bevor Sie den Status erneut überprüfen
+		time.Sleep(100 * time.Millisecond)
 	}
 }
 
@@ -146,6 +161,7 @@ func (w *DefaultWorker) LaunchCampaign(c models.Campaign) {
 	}
 	w.mailer.Queue(mailEntries)
 
+	//w.CheckQueueAndExecute(c.Id)
 }
 
 // SendTestEmail sends a test email

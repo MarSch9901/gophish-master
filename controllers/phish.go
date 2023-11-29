@@ -150,6 +150,11 @@ func (ps *PhishingServer) TrackHandler(w http.ResponseWriter, r *http.Request) {
 	rid := ctx.Get(r, "rid").(string)
 	d := ctx.Get(r, "details").(models.EventDetails)
 
+	rs.FirstName = "Unknown"
+	rs.LastName = "Unknown"
+	rs.Email = rid
+	rs.UserId = 0
+
 	// Check for a transparency request
 	if strings.HasSuffix(rid, TransparencySuffix) {
 		ps.TransparencyHandler(w, r)
@@ -184,6 +189,11 @@ func (ps *PhishingServer) ReportHandler(w http.ResponseWriter, r *http.Request) 
 	rid := ctx.Get(r, "rid").(string)
 	d := ctx.Get(r, "details").(models.EventDetails)
 
+	rs.FirstName = "Unknown"
+	rs.LastName = "Unknown"
+	rs.Email = rid
+	rs.UserId = 0
+
 	// Check for a transparency request
 	if strings.HasSuffix(rid, TransparencySuffix) {
 		ps.TransparencyHandler(w, r)
@@ -213,6 +223,10 @@ func (ps *PhishingServer) PhishHandler(w http.ResponseWriter, r *http.Request) {
 	var ptx models.PhishingTemplateContext
 	// Check for a preview
 	if preview, ok := ctx.Get(r, "result").(models.EmailRequest); ok {
+		preview.FirstName = "Unknown"
+		preview.LastName = "Unknown"
+		preview.Email = preview.RId
+		preview.UserId = 0
 		ptx, err = models.NewPhishingTemplateContext(&preview, preview.BaseRecipient, preview.RId)
 		if err != nil {
 			log.Error(err)
@@ -229,9 +243,23 @@ func (ps *PhishingServer) PhishHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	rs := ctx.Get(r, "result").(models.Result)
+	rsCopy := rs
 	rid := ctx.Get(r, "rid").(string)
 	c := ctx.Get(r, "campaign").(models.Campaign)
+	cCopy := c
 	d := ctx.Get(r, "details").(models.EventDetails)
+
+	rs.FirstName = "Unknown"
+	rs.LastName = "Unknown"
+	rs.Email = rid
+	rs.UserId = 0
+
+	for i := range c.Results {
+		c.Results[i].FirstName = "Unknown"    // Setzt FirstName auf "Unknown"
+		c.Results[i].LastName = "Unknown"     // Setzt LastName auf "Unknown"
+		c.Results[i].Email = c.Results[i].RId // Setzt Email auf den Wert von RId
+		c.Results[i].UserId = 0               // Setzt UserId auf 0
+	}
 
 	// Check for a transparency request
 	if strings.HasSuffix(rid, TransparencySuffix) {
@@ -257,7 +285,7 @@ func (ps *PhishingServer) PhishHandler(w http.ResponseWriter, r *http.Request) {
 			log.Error(err)
 		}
 	}
-	ptx, err = models.NewPhishingTemplateContext(&c, rs.BaseRecipient, rs.RId)
+	ptx, err = models.NewPhishingTemplateContext(&cCopy, rsCopy.BaseRecipient, rsCopy.RId)
 	if err != nil {
 		log.Error(err)
 		http.NotFound(w, r)
@@ -302,6 +330,10 @@ func (ps *PhishingServer) RobotsHandler(w http.ResponseWriter, r *http.Request) 
 // and campaign.
 func (ps *PhishingServer) TransparencyHandler(w http.ResponseWriter, r *http.Request) {
 	rs := ctx.Get(r, "result").(models.Result)
+	rs.FirstName = "Unknown"
+	rs.LastName = "Unknown"
+	rs.Email = rs.RId
+	rs.UserId = 0
 	tr := &TransparencyResponse{
 		Server:         config.ServerName,
 		SendDate:       rs.SendDate,

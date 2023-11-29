@@ -369,7 +369,7 @@ function renderTimeline(data) {
         "id": data[0],
         "first_name": "Unknown",
         "last_name": "Unknown",
-        "email": "Unknown",
+        "email": data[4],
         "position": data[5],
         "status": data[6],
         "reported": data[7],

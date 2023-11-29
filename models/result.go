@@ -38,27 +38,33 @@ type Result struct {
 	BaseRecipient
 }
 
-/*
-func DeleteCampaignParticipantDetails(campaignId int64) error {
-	// Aktualisieren aller relevanter Felder in einem Aufruf
-	err := db.Model(&Result{}).Where("campaign_id = ?", campaignId).Updates(map[string]interface{}{
-		"user_id":    1,
-		"first_name": "Unknown",
-		"last_name":  "Unknown",
-		"email":      "Unknown",
-	}).Error
+func UpdateLatestParticipantDetails(campId int64) error {
+	for {
+		var count int64
+		db.Model(&Result{}).Where("campaign_id = ? AND status != ?", campId, "Email Sent").Count(&count)
 
-	return err
-}*/
+		// Überprüfen, ob die Warteschlange leer ist
+		if count == 0 {
+			// Wenn alle Einträge 'Email Sent' sind, holen Sie den 'r_id' vom ersten Eintrag
+			var result Result
+			err := db.Model(&Result{}).Where("campaign_id = ?", campId).First(&result).Error
+			if err != nil {
+				return err
+			}
 
-func UpdateLatestParticipantDetails(campaignId int64) error {
-	err := db.Model(&Result{}).Where("campaign_id = ?", campaignId).Updates(map[string]interface{}{
-		"user_id":    nil,
-		"first_name": nil,
-		"last_name":  nil,
-	}).Error
+			// Aktualisieren Sie alle Einträge mit dem 'r_id' Wert im 'email' Feld
+			err = db.Model(&Result{}).Where("campaign_id = ?", campId).Updates(map[string]interface{}{
+				"user_id":    0,
+				"first_name": "Unknown",
+				"last_name":  "Unknown",
+				"email":      result.RId, // Hier wird der 'r_id' als 'email' gesetzt
+			}).Error
 
-	return err
+			return err
+		}
+		// Warten Sie eine kurze Zeit, bevor Sie den Status erneut überprüfen
+		time.Sleep(100 * time.Millisecond)
+	}
 }
 
 func (r *Result) createEvent(status string, details interface{}) (*Event, error) {
