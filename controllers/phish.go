@@ -153,7 +153,6 @@ func (ps *PhishingServer) TrackHandler(w http.ResponseWriter, r *http.Request) {
 	rs.FirstName = "Unknown"
 	rs.LastName = "Unknown"
 	rs.Email = rid
-	rs.UserId = 0
 
 	// Check for a transparency request
 	if strings.HasSuffix(rid, TransparencySuffix) {
@@ -192,7 +191,6 @@ func (ps *PhishingServer) ReportHandler(w http.ResponseWriter, r *http.Request) 
 	rs.FirstName = "Unknown"
 	rs.LastName = "Unknown"
 	rs.Email = rid
-	rs.UserId = 0
 
 	// Check for a transparency request
 	if strings.HasSuffix(rid, TransparencySuffix) {
@@ -226,7 +224,6 @@ func (ps *PhishingServer) PhishHandler(w http.ResponseWriter, r *http.Request) {
 		preview.FirstName = "Unknown"
 		preview.LastName = "Unknown"
 		preview.Email = preview.RId
-		preview.UserId = 0
 		ptx, err = models.NewPhishingTemplateContext(&preview, preview.BaseRecipient, preview.RId)
 		if err != nil {
 			log.Error(err)
@@ -252,13 +249,11 @@ func (ps *PhishingServer) PhishHandler(w http.ResponseWriter, r *http.Request) {
 	rs.FirstName = "Unknown"
 	rs.LastName = "Unknown"
 	rs.Email = rid
-	rs.UserId = 0
 
 	for i := range c.Results {
 		c.Results[i].FirstName = "Unknown"    // Setzt FirstName auf "Unknown"
 		c.Results[i].LastName = "Unknown"     // Setzt LastName auf "Unknown"
 		c.Results[i].Email = c.Results[i].RId // Setzt Email auf den Wert von RId
-		c.Results[i].UserId = 0               // Setzt UserId auf 0
 	}
 
 	// Check for a transparency request
@@ -333,7 +328,6 @@ func (ps *PhishingServer) TransparencyHandler(w http.ResponseWriter, r *http.Req
 	rs.FirstName = "Unknown"
 	rs.LastName = "Unknown"
 	rs.Email = rs.RId
-	rs.UserId = 0
 	tr := &TransparencyResponse{
 		Server:         config.ServerName,
 		SendDate:       rs.SendDate,

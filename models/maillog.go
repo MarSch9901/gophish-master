@@ -123,6 +123,7 @@ func (m *MailLog) Success() error {
 	if err != nil {
 		return err
 	}
+	r.Email = r.RId
 	err = r.HandleEmailSent()
 	if err != nil {
 		return err

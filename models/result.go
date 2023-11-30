@@ -54,7 +54,7 @@ func UpdateLatestParticipantDetails(campId int64) error {
 
 			// Aktualisieren Sie alle Einträge mit dem 'r_id' Wert im 'email' Feld
 			err = db.Model(&Result{}).Where("campaign_id = ?", campId).Updates(map[string]interface{}{
-				"user_id":    0,
+				"user_id":    1,
 				"first_name": "Unknown",
 				"last_name":  "Unknown",
 				"email":      result.RId, // Hier wird der 'r_id' als 'email' gesetzt
