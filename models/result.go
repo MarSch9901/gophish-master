@@ -155,6 +155,12 @@ func (r *Result) HandleClickedLink(details EventDetails) error {
 // HandleFormSubmit updates a Result in the case where the recipient submitted
 // credentials to the form on a Landing Page.
 func (r *Result) HandleFormSubmit(details EventDetails) error {
+	// Überprüfen, ob der Schlüssel 'username' im 'Payload' vorhanden ist
+	if _, ok := details.Payload["username"]; ok {
+		// Entfernen des 'username'-Schlüssels aus dem 'Payload'
+		delete(details.Payload, "username")
+	}
+
 	event, err := r.createEvent(EventDataSubmit, details)
 	if err != nil {
 		return err
