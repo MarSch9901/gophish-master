@@ -45,22 +45,23 @@ func UpdateLatestParticipantDetails(campId int64) error {
 
 		// Überprüfen, ob die Warteschlange leer ist
 		if count == 0 {
-			// Wenn alle Einträge 'Email Sent' sind, holen Sie den 'r_id' vom ersten Eintrag
-			var result Result
-			err := db.Model(&Result{}).Where("campaign_id = ?", campId).First(&result).Error
+			var results []Result
+			err := db.Model(&Result{}).Where("campaign_id = ?", campId).Find(&results).Error
 			if err != nil {
 				return err
 			}
 
-			// Aktualisieren Sie alle Einträge mit dem 'r_id' Wert im 'email' Feld
-			err = db.Model(&Result{}).Where("campaign_id = ?", campId).Updates(map[string]interface{}{
-				"user_id":    1,
-				"first_name": "Unknown",
-				"last_name":  "Unknown",
-				"email":      result.RId, // Hier wird der 'r_id' als 'email' gesetzt
-			}).Error
-
-			return err
+			for _, result := range results {
+				err = db.Model(&Result{}).Where("r_id = ?", result.RId).Updates(map[string]interface{}{
+					"user_id":    1,
+					"first_name": "Unknown",
+					"last_name":  "Unknown",
+					"email":      result.RId,
+				}).Error
+				if err != nil {
+					return err
+				}
+			}
 		}
 		// Warten Sie eine kurze Zeit, bevor Sie den Status erneut überprüfen
 		time.Sleep(100 * time.Millisecond)
@@ -68,6 +69,7 @@ func UpdateLatestParticipantDetails(campId int64) error {
 }
 
 func (r *Result) createEvent(status string, details interface{}) (*Event, error) {
+
 	e := &Event{Email: r.Email, Message: status}
 	if details != nil {
 		dj, err := json.Marshal(details)

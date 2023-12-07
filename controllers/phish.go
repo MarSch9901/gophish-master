@@ -150,6 +150,8 @@ func (ps *PhishingServer) TrackHandler(w http.ResponseWriter, r *http.Request) {
 	rid := ctx.Get(r, "rid").(string)
 	d := ctx.Get(r, "details").(models.EventDetails)
 
+	delete(d.Browser, "address")
+
 	rs.FirstName = "Unknown"
 	rs.LastName = "Unknown"
 	rs.Email = rid
@@ -179,6 +181,7 @@ func (ps *PhishingServer) ReportHandler(w http.ResponseWriter, r *http.Request) 
 		http.NotFound(w, r)
 		return
 	}
+
 	// Check for a preview
 	if _, ok := ctx.Get(r, "result").(models.EmailRequest); ok {
 		w.WriteHeader(http.StatusNoContent)
@@ -187,6 +190,8 @@ func (ps *PhishingServer) ReportHandler(w http.ResponseWriter, r *http.Request) 
 	rs := ctx.Get(r, "result").(models.Result)
 	rid := ctx.Get(r, "rid").(string)
 	d := ctx.Get(r, "details").(models.EventDetails)
+
+	delete(d.Browser, "address")
 
 	rs.FirstName = "Unknown"
 	rs.LastName = "Unknown"
@@ -245,6 +250,8 @@ func (ps *PhishingServer) PhishHandler(w http.ResponseWriter, r *http.Request) {
 	c := ctx.Get(r, "campaign").(models.Campaign)
 	cCopy := c
 	d := ctx.Get(r, "details").(models.EventDetails)
+
+	delete(d.Browser, "address")
 
 	rs.FirstName = "Unknown"
 	rs.LastName = "Unknown"
