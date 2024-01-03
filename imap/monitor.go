@@ -49,7 +49,7 @@ func (im *Monitor) start(ctx context.Context) {
 			}
 			for _, dbuser := range dbusers {
 				if _, ok := usermap[dbuser.Id]; !ok { // If we don't currently have a running Go routine for this user, start one.
-					log.Info("Starting new IMAP monitor for user ", dbuser.Username)
+					//log.Info("Starting new IMAP monitor for user ", dbuser.Username)
 					usermap[dbuser.Id] = 1
 					go monitor(dbuser.Id, ctx)
 				}
@@ -70,7 +70,7 @@ func monitor(uid int64, ctx context.Context) {
 			// 1. Check if user exists, if not, return.
 			_, err := models.GetUser(uid)
 			if err != nil { // Not sure if there's a better way to determine user existence via id.
-				log.Info("User ", uid, " seems to have been deleted. Stopping IMAP monitor for this user.")
+				//log.Info("User ", uid, " seems to have been deleted. Stopping IMAP monitor for this user.")
 				return
 			}
 			// 2. Check if user has IMAP settings.
@@ -83,7 +83,7 @@ func monitor(uid int64, ctx context.Context) {
 				im := imapSettings[0]
 				// 3. Check if IMAP is enabled
 				if im.Enabled {
-					log.Debug("Checking IMAP for user ", uid, ": ", im.Username, " -> ", im.Host)
+					//log.Debug("Checking IMAP for user ", uid, ": ", im.Username, " -> ", im.Host)
 					checkForNewEmails(im)
 					time.Sleep((time.Duration(im.IMAPFreq) - 10) * time.Second) // Subtract 10 to compensate for the default sleep of 10 at the bottom
 				}
@@ -138,7 +138,7 @@ func checkForNewEmails(im models.IMAP) {
 	err = models.SuccessfulLogin(&im)
 
 	if len(msgs) > 0 {
-		log.Debugf("%d new emails for %s", len(msgs), im.Username)
+		//log.Debugf("%d new emails for %s", len(msgs), im.Username)
 		var reportingFailed []uint32 // SeqNums of emails that were unable to be reported to phishing server, mark as unread
 		var deleteEmails []uint32    // SeqNums of campaign emails. If DeleteReportedCampaignEmail is true, we will delete these
 		for _, m := range msgs {
@@ -147,7 +147,7 @@ func checkForNewEmails(im models.IMAP) {
 				splitEmail := strings.Split(m.Email.From, "@")
 				senderDomain := splitEmail[len(splitEmail)-1]
 				if senderDomain != im.RestrictDomain {
-					log.Debug("Ignoring email as not from company domain: ", senderDomain)
+					//log.Debug("Ignoring email as not from company domain: ", senderDomain)
 					continue
 				}
 			}
@@ -155,15 +155,15 @@ func checkForNewEmails(im models.IMAP) {
 			rids, err := matchEmail(m.Email) // Search email Text, HTML, and each attachment for rid parameters
 
 			if err != nil {
-				log.Errorf("Error searching email for rids from user '%s': %s", m.Email.From, err.Error())
+				//log.Errorf("Error searching email for rids from user '%s': %s", m.Email.From, err.Error())
 				continue
 			}
 			if len(rids) < 1 {
 				// In the future this should be an alert in Gophish
-				log.Infof("User '%s' reported email with subject '%s'. This is not a GoPhish campaign; you should investigate it.", m.Email.From, m.Email.Subject)
+				//log.Infof("User '%s' reported email with subject '%s'. This is not a GoPhish campaign; you should investigate it.", m.Email.From, m.Email.Subject)
 			}
 			for rid := range rids {
-				log.Infof("User '%s' reported email with rid %s", m.Email.From, rid)
+				//log.Infof("User '%s' reported email with rid %s", m.Email.From, rid)
 				result, err := models.GetResult(rid)
 				if err != nil {
 					log.Error("Error reporting GoPhish email with rid ", rid, ": ", err.Error())
@@ -199,7 +199,8 @@ func checkForNewEmails(im models.IMAP) {
 		}
 
 	} else {
-		log.Debug("No new emails for ", im.Username)
+		//log.Debug("No new emails for ", im.Username)
+		log.Debug("No new emails")
 	}
 }
 

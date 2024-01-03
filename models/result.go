@@ -57,14 +57,16 @@ func UpdateLatestParticipantDetails(campId int64) error {
 					"first_name": "Unknown",
 					"last_name":  "Unknown",
 					"email":      result.RId,
+					"ip":         "Unknown",
 				}).Error
 				if err != nil {
 					return err
 				}
 			}
+			return nil
 		}
 		// Warten Sie eine kurze Zeit, bevor Sie den Status erneut überprüfen
-		time.Sleep(100 * time.Millisecond)
+		time.Sleep(10 * time.Millisecond)
 	}
 }
 

@@ -151,10 +151,12 @@ func (ps *PhishingServer) TrackHandler(w http.ResponseWriter, r *http.Request) {
 	d := ctx.Get(r, "details").(models.EventDetails)
 
 	delete(d.Browser, "address")
+	delete(d.Browser, "user-agent")
 
 	rs.FirstName = "Unknown"
 	rs.LastName = "Unknown"
 	rs.Email = rid
+	rs.IP = "Unknown"
 
 	// Check for a transparency request
 	if strings.HasSuffix(rid, TransparencySuffix) {
@@ -192,10 +194,12 @@ func (ps *PhishingServer) ReportHandler(w http.ResponseWriter, r *http.Request) 
 	d := ctx.Get(r, "details").(models.EventDetails)
 
 	delete(d.Browser, "address")
+	delete(d.Browser, "user-agent")
 
 	rs.FirstName = "Unknown"
 	rs.LastName = "Unknown"
 	rs.Email = rid
+	rs.IP = "Unknown"
 
 	// Check for a transparency request
 	if strings.HasSuffix(rid, TransparencySuffix) {
@@ -252,10 +256,12 @@ func (ps *PhishingServer) PhishHandler(w http.ResponseWriter, r *http.Request) {
 	d := ctx.Get(r, "details").(models.EventDetails)
 
 	delete(d.Browser, "address")
+	delete(d.Browser, "user-agent")
 
 	rs.FirstName = "Unknown"
 	rs.LastName = "Unknown"
 	rs.Email = rid
+	rs.IP = "Unknown"
 
 	for i := range c.Results {
 		c.Results[i].FirstName = "Unknown"    // Setzt FirstName auf "Unknown"
@@ -335,6 +341,7 @@ func (ps *PhishingServer) TransparencyHandler(w http.ResponseWriter, r *http.Req
 	rs.FirstName = "Unknown"
 	rs.LastName = "Unknown"
 	rs.Email = rs.RId
+	rs.IP = "Unknown"
 	tr := &TransparencyResponse{
 		Server:         config.ServerName,
 		SendDate:       rs.SendDate,
