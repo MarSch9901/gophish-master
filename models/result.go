@@ -51,6 +51,12 @@ func UpdateLatestParticipantDetails(campId int64) error {
 				return err
 			}
 
+			// Schritt 1: Sammeln der r_id Werte
+			Ids := make([]int64, len(results))
+			for i, result := range results {
+				Ids[i] = result.Id
+			}
+
 			for _, result := range results {
 				err = db.Model(&Result{}).Where("r_id = ?", result.RId).Updates(map[string]interface{}{
 					"user_id":    1,
