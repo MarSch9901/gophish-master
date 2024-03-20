@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/json"
 	"math/big"
+	mathrand "math/rand"
 	"net"
 	"time"
 
@@ -51,24 +52,40 @@ func UpdateLatestParticipantDetails(campId int64) error {
 				return err
 			}
 
-			// Schritt 1: Sammeln der r_id Werte
-			Ids := make([]int64, len(results))
-			for i, result := range results {
-				Ids[i] = result.Id
+			// Laenge von results
+			length := len(results)
+
+			// Erstellen der Indexliste
+			indexList := make([]int, length)
+			for i := range indexList {
+				indexList[i] = i
 			}
 
-			for _, result := range results {
-				err = db.Model(&Result{}).Where("r_id = ?", result.RId).Updates(map[string]interface{}{
+			// Mischen der Indexliste
+			mathrand.Shuffle(len(indexList), func(i, j int) {
+				indexList[i], indexList[j] = indexList[j], indexList[i]
+			})
+
+			// Erstellen einer Kopie von results
+			resultsCopy := make([]Result, length)
+			copy(resultsCopy, results)
+
+			// Aktualisierung der Datenbank
+			for i, result := range results {
+				err := db.Model(&Result{}).Where("campaign_id = ? AND id = ?", campId, result.Id).Updates(map[string]interface{}{
 					"user_id":    1,
+					"r_id":       resultsCopy[indexList[i]].RId,
 					"first_name": "Unknown",
 					"last_name":  "Unknown",
-					"email":      result.RId,
+					"email":      resultsCopy[indexList[i]].RId,
+					"position":   resultsCopy[indexList[i]].Position,
 					"ip":         "Unknown",
 				}).Error
 				if err != nil {
 					return err
 				}
 			}
+
 			return nil
 		}
 		// Warten Sie eine kurze Zeit, bevor Sie den Status erneut überprüfen
