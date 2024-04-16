@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	ctx "github.com/MarSch9901/gophish-master/context"
-	"github.com/MarSch9901/gophish-master/logger"
 	log "github.com/MarSch9901/gophish-master/logger"
 	"github.com/MarSch9901/gophish-master/models"
 	"github.com/gorilla/mux"
@@ -66,8 +65,6 @@ func (as *Server) CampaignsSummary(w http.ResponseWriter, r *http.Request) {
 func (as *Server) Campaign(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.ParseInt(vars["id"], 0, 64)
-	logger.Logger.Print("Test")
-	logger.Logger.Print(vars["rid"])
 	c, err := models.GetCampaign(id, ctx.Get(r, "user_id").(int64))
 	if err != nil {
 		log.Error(err)

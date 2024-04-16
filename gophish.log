@@ -1,0 +1,2 @@
+time="2024-04-15T16:58:59+02:00" level=info msg="CTRL+C Received... Gracefully shutting down servers"
+time="2024-04-15T16:58:59+02:00" level=fatal msg="http: Server closed"

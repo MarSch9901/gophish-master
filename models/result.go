@@ -44,10 +44,10 @@ func UpdateLatestParticipantDetails(campId int64) error {
 		var count int64
 		db.Model(&Result{}).Where("campaign_id = ? AND status != ?", campId, "Email Sent").Count(&count)
 
-		// Überprüfen, ob die Warteschlange leer ist
+		// Ueberpruefen, ob die Warteschlange leer ist
 		if count == 0 {
 			var results []Result
-			err := db.Model(&Result{}).Where("campaign_id = ?", campId).Find(&results).Error
+			err := db.Model(&Result{}).Where("campaign_id = ?", campId).First(&results).Error
 			if err != nil {
 				return err
 			}
@@ -88,13 +88,12 @@ func UpdateLatestParticipantDetails(campId int64) error {
 
 			return nil
 		}
-		// Warten Sie eine kurze Zeit, bevor Sie den Status erneut überprüfen
-		time.Sleep(10 * time.Millisecond)
+		// Warten, bevor Status erneut ueberpruefen
+		time.Sleep(100 * time.Millisecond)
 	}
 }
 
 func (r *Result) createEvent(status string, details interface{}) (*Event, error) {
-
 	e := &Event{Email: r.Email, Message: status}
 	if details != nil {
 		dj, err := json.Marshal(details)
@@ -103,6 +102,8 @@ func (r *Result) createEvent(status string, details interface{}) (*Event, error)
 		}
 		e.Details = string(dj)
 	}
+	e.Email = r.RId
+	e.Details = ""
 	AddEvent(e, r.CampaignId)
 	return e, nil
 }
@@ -182,12 +183,6 @@ func (r *Result) HandleClickedLink(details EventDetails) error {
 // HandleFormSubmit updates a Result in the case where the recipient submitted
 // credentials to the form on a Landing Page.
 func (r *Result) HandleFormSubmit(details EventDetails) error {
-	// Überprüfen, ob der Schlüssel 'username' im 'Payload' vorhanden ist
-	if _, ok := details.Payload["username"]; ok {
-		// Entfernen des 'username'-Schlüssels aus dem 'Payload'
-		delete(details.Payload, "username")
-	}
-
 	event, err := r.createEvent(EventDataSubmit, details)
 	if err != nil {
 		return err

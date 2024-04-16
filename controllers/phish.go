@@ -150,12 +150,9 @@ func (ps *PhishingServer) TrackHandler(w http.ResponseWriter, r *http.Request) {
 	rid := ctx.Get(r, "rid").(string)
 	d := ctx.Get(r, "details").(models.EventDetails)
 
-	delete(d.Browser, "address")
-	delete(d.Browser, "user-agent")
-
 	rs.FirstName = "Unknown"
 	rs.LastName = "Unknown"
-	rs.Email = rid
+	rs.Email = rs.RId
 	rs.IP = "Unknown"
 
 	// Check for a transparency request
@@ -183,7 +180,6 @@ func (ps *PhishingServer) ReportHandler(w http.ResponseWriter, r *http.Request) 
 		http.NotFound(w, r)
 		return
 	}
-
 	// Check for a preview
 	if _, ok := ctx.Get(r, "result").(models.EmailRequest); ok {
 		w.WriteHeader(http.StatusNoContent)
@@ -192,9 +188,6 @@ func (ps *PhishingServer) ReportHandler(w http.ResponseWriter, r *http.Request) 
 	rs := ctx.Get(r, "result").(models.Result)
 	rid := ctx.Get(r, "rid").(string)
 	d := ctx.Get(r, "details").(models.EventDetails)
-
-	delete(d.Browser, "address")
-	delete(d.Browser, "user-agent")
 
 	rs.FirstName = "Unknown"
 	rs.LastName = "Unknown"
@@ -255,9 +248,6 @@ func (ps *PhishingServer) PhishHandler(w http.ResponseWriter, r *http.Request) {
 	cCopy := c
 	d := ctx.Get(r, "details").(models.EventDetails)
 
-	delete(d.Browser, "address")
-	delete(d.Browser, "user-agent")
-
 	rs.FirstName = "Unknown"
 	rs.LastName = "Unknown"
 	rs.Email = rid
@@ -267,6 +257,7 @@ func (ps *PhishingServer) PhishHandler(w http.ResponseWriter, r *http.Request) {
 		c.Results[i].FirstName = "Unknown"    // Setzt FirstName auf "Unknown"
 		c.Results[i].LastName = "Unknown"     // Setzt LastName auf "Unknown"
 		c.Results[i].Email = c.Results[i].RId // Setzt Email auf den Wert von RId
+		c.Results[i].IP = "Unknown"
 	}
 
 	// Check for a transparency request

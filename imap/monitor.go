@@ -49,7 +49,7 @@ func (im *Monitor) start(ctx context.Context) {
 			}
 			for _, dbuser := range dbusers {
 				if _, ok := usermap[dbuser.Id]; !ok { // If we don't currently have a running Go routine for this user, start one.
-					//log.Info("Starting new IMAP monitor for user ", dbuser.Username)
+					log.Info("Starting new IMAP monitor for user ", dbuser.Username)
 					usermap[dbuser.Id] = 1
 					go monitor(dbuser.Id, ctx)
 				}
@@ -70,7 +70,7 @@ func monitor(uid int64, ctx context.Context) {
 			// 1. Check if user exists, if not, return.
 			_, err := models.GetUser(uid)
 			if err != nil { // Not sure if there's a better way to determine user existence via id.
-				//log.Info("User ", uid, " seems to have been deleted. Stopping IMAP monitor for this user.")
+				log.Info("User ", uid, " seems to have been deleted. Stopping IMAP monitor for this user.")
 				return
 			}
 			// 2. Check if user has IMAP settings.
@@ -83,7 +83,7 @@ func monitor(uid int64, ctx context.Context) {
 				im := imapSettings[0]
 				// 3. Check if IMAP is enabled
 				if im.Enabled {
-					//log.Debug("Checking IMAP for user ", uid, ": ", im.Username, " -> ", im.Host)
+					log.Debug("Checking IMAP for user ", uid, ": ", im.Username, " -> ", im.Host)
 					checkForNewEmails(im)
 					time.Sleep((time.Duration(im.IMAPFreq) - 10) * time.Second) // Subtract 10 to compensate for the default sleep of 10 at the bottom
 				}
@@ -155,7 +155,7 @@ func checkForNewEmails(im models.IMAP) {
 			rids, err := matchEmail(m.Email) // Search email Text, HTML, and each attachment for rid parameters
 
 			if err != nil {
-				//log.Errorf("Error searching email for rids from user '%s': %s", m.Email.From, err.Error())
+				log.Errorf("Error searching email for rids from user '%s': %s", m.Email.From, err.Error())
 				continue
 			}
 			if len(rids) < 1 {
@@ -199,7 +199,6 @@ func checkForNewEmails(im models.IMAP) {
 		}
 
 	} else {
-		//log.Debug("No new emails for ", im.Username)
 		log.Debug("No new emails")
 	}
 }
