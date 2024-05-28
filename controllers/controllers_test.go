@@ -110,9 +110,9 @@ func createTestData(t *testing.T) {
 	smtp := models.SMTP{Name: "Test Page"}
 	smtp.UserId = 1
 	smtp.Host = "smtp.gmail.com"
-	smtp.FromAddress = "paddlefish20@gmail.com"
-	smtp.Username = "testmastert202@gmail.com"
-	smtp.Password = "lkmefhxjtwsmecqt"
+	smtp.FromAddress = ""
+	smtp.Username = ""
+	smtp.Password = ""
 	models.PostSMTP(&smtp)
 
 	// Setup and "launch" our campaign
